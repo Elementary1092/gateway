@@ -1,0 +1,11 @@
+crud_service:
+  address: localhost
+  port: 8081
+
+fetcher_service:
+  address: localhost
+  port: 8000
+
+gateway:
+  address: localhost
+  port: 8080
