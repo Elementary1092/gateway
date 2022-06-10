@@ -2,18 +2,8 @@ package domain
 
 import services "github.com/elem1092/gateway/pkg/client/grpc/CRUDService"
 
-type GetPostInfo struct {
-	Id     int32  `json:"id"`
-	IdType string `json:"id_type"`
-}
-
-type DeleteDTO struct {
-	Id int32 `json:"id"`
-}
-
 type ErrorDTO struct {
 	Error string `json:"error"`
-	Code  int    `json:"error_code"`
 }
 
 type StatusDTO struct {

@@ -6,7 +6,9 @@ import (
     "github.com/elem1092/gateway/internal/domain"
     services "github.com/elem1092/gateway/pkg/client/grpc/CRUDService"
     "github.com/elem1092/gateway/pkg/logging"
+    "github.com/gorilla/mux"
     "net/http"
+    "strconv"
 )
 
 type deleteHandler struct {
@@ -21,33 +23,36 @@ func NewDeleteHandler(logger *logging.Logger, client services.CRUDServiceClient)
     }
 }
 
-// DELETE /posts/id=? {id: ...}
+// DELETE /posts?id=
 func (d *deleteHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
     d.logger.Info("Handling delete request")
 
     encoder := json.NewEncoder(writer)
-    reader, err := request.GetBody()
-    if err != nil {
-        d.logger.Errorf("Could not get body of a delete request due to: %v", err)
+
+    vars := mux.Vars(request)
+    idStr, ok := vars["id"]
+    if !ok {
+        writer.WriteHeader(http.StatusBadRequest)
         errMsg := &domain.ErrorDTO{Error: "Invalid request"}
         writer.WriteHeader(http.StatusBadRequest)
-        if err = encoder.Encode(errMsg); err != nil {
+        if err := encoder.Encode(errMsg); err != nil {
             d.logger.Errorf("could not write response due to: %v", err)
         }
         return
     }
 
-    d.logger.Info("Decoding request")
-
-    dto := domain.DeleteDTO{}
-    decoder := json.NewDecoder(reader)
-    if err = decoder.Decode(dto); err != nil {
-        d.logger.Errorf("Failed to decode delete request due to: %v", err)
+    id, err := strconv.ParseInt(idStr, 10, 32)
+    if err != nil {
         writer.WriteHeader(http.StatusBadRequest)
+        errMsg := &domain.ErrorDTO{Error: "Invalid request; expected id to be integer type"}
+        writer.WriteHeader(http.StatusBadRequest)
+        if err := encoder.Encode(errMsg); err != nil {
+            d.logger.Errorf("could not write response due to: %v", err)
+        }
         return
     }
 
-    req := &services.DeleteRequest{Id: dto.Id}
+    req := &services.DeleteRequest{Id: int32(id)}
     _, err = d.client.DeletePost(context.Background(), req)
     if err != nil {
         d.logger.Errorf("Could not delete record due to: %v", err)
