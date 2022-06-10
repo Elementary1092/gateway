@@ -20,6 +20,12 @@ func NewSaveHandler(logger *logging.Logger, client services.CRUDServiceClient) h
 
 // POST /posts {user_id: ..., title: '...', body: '...'}
 func (s *saveHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "text/json")
 	//TODO implement me
 	panic("implement me")
+}
+
+func (s *saveHandler) parseBodyToSaveDTO(r *http.Request) (*services.SavePostDTO, error) {
+
+	return nil, nil
 }

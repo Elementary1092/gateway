@@ -24,6 +24,8 @@ func NewFetcherHandler(logger *logging.Logger, client fetch.FetchServiceClient) 
 
 // GET /error
 func (f *fetcherErrorHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "text/json")
+
 	f.logger.Info("Handling /error request")
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 5*time.Second)

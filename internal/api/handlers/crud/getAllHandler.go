@@ -25,6 +25,7 @@ func NewGetAllHandler(logger *logging.Logger, client services.CRUDServiceClient)
 
 // GET /posts
 func (g *getAllHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "text/json")
 	g.logger.Info("Processing GET ALL POSTS request")
 	req := &services.GetPostsRequest{
 		Id:     0,

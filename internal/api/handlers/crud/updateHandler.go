@@ -20,6 +20,7 @@ func NewUpdateHandler(logger *logging.Logger, client services.CRUDServiceClient)
 
 // PATCH /posts/id=? {title: '...', body: '...'}
 func (u updateHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "text/json")
 	//TODO implement me
 	panic("implement me")
 }

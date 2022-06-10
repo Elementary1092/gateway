@@ -24,6 +24,8 @@ func NewStatusHandler(logger *logging.Logger, client fetch.FetchServiceClient) h
 
 // GET /status
 func (s *statusHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "text-json")
+
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelFunc()
 
