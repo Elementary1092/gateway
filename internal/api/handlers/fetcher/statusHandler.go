@@ -1,4 +1,4 @@
-package handlers
+package fetcher
 
 import (
 	"context"
@@ -15,6 +15,13 @@ type statusHandler struct {
 	client fetch.FetchServiceClient
 }
 
+func NewStatusHandler(logger *logging.Logger, client fetch.FetchServiceClient) http.Handler {
+	return &statusHandler{
+		logger: logger,
+		client: client,
+	}
+}
+
 // GET /status
 func (s *statusHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 5*time.Second)
@@ -27,6 +34,7 @@ func (s *statusHandler) ServeHTTP(writer http.ResponseWriter, request *http.Requ
 		if err := encoder.Encode(errMsg); err != nil {
 			s.logger.Errorf("Got an error from encoder: %v", err)
 		}
+		writer.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -34,5 +42,8 @@ func (s *statusHandler) ServeHTTP(writer http.ResponseWriter, request *http.Requ
 		Status: fetch.Status_name[int32(out.GetStatusCode())],
 	}); err != nil {
 		s.logger.Errorf("Got an error from encoder: %v", err)
+		writer.WriteHeader(http.StatusInternalServerError)
+		return
 	}
+	writer.WriteHeader(http.StatusOK)
 }
