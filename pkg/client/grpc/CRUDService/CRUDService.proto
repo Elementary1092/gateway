@@ -6,7 +6,7 @@ option go_package="github.com/elem1092/services";
 
 service CRUDService {
   rpc SavePost(SavePostDTO) returns (PostDTO);
-  rpc GetPosts(GetPostsRequest) returns (GetPostsResponse);
+  rpc GetPosts(GetPostsRequest) returns (stream PostDTO);
   rpc DeletePost(DeleteRequest) returns (ErrorResponse);
   rpc UpdatePost(UpdatePostDTO) returns (ErrorResponse);
 }
@@ -19,10 +19,6 @@ message GetPostsRequest {
     ALL = 2;
   }
   IdType needed = 2;
-}
-
-message GetPostsResponse {
-  repeated PostDTO posts = 1;
 }
 
 message ContentDTO {
