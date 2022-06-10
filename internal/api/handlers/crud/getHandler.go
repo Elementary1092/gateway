@@ -34,15 +34,20 @@ func (g *getHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request
 	writer.Header().Set("Content-Type", "text/json")
 	g.logger.Info("Processing GET ALL POSTS BY ID request")
 
+	encoder := json.NewEncoder(writer)
+
 	vars := mux.Vars(request)
 	idStr, ok := vars["id"]
 	if !ok {
 		writer.WriteHeader(http.StatusBadRequest)
 		g.logger.Errorf("Could not find id variable on: %s", request.URL.String())
+		errMsg := &domain.ErrorDTO{Error: "no id variable"}
+		if err := encoder.Encode(errMsg); err != nil {
+			g.logger.Errorf("Error in encoding error message: %v", err)
+		}
 		return
 	}
 
-	encoder := json.NewEncoder(writer)
 	id, err := strconv.ParseInt(idStr, 10, 32)
 	idType, err := g.parseIdType(request)
 	if err != nil {
