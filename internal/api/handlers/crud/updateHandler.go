@@ -23,7 +23,7 @@ func NewUpdateHandler(logger *logging.Logger, client services.CRUDServiceClient)
 	}
 }
 
-// PATCH /posts/id=? {title: '...', body: '...'}
+// PATCH /posts/{id:[0-9]+} {"title": "...", "body": "..."}
 func (u *updateHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "text/json")
 
