@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"context"
 	"github.com/elem1092/gateway/internal/api/handlers/crud"
 	"github.com/elem1092/gateway/internal/api/handlers/fetcher"
 	"github.com/elem1092/gateway/internal/config"
+	fetch "github.com/elem1092/gateway/pkg/client/grpc/FetcherService"
 	crudClient "github.com/elem1092/gateway/pkg/client/grpc/crud"
 	fetcherClient "github.com/elem1092/gateway/pkg/client/grpc/fetcher"
 	"github.com/elem1092/gateway/pkg/logging"
@@ -33,11 +35,14 @@ func InitializeRouter(logger *logging.Logger, cfg *config.Configuration) http.Ha
 	router.Handle("/posts", getAllHandler).Methods("GET")
 	router.Handle("/posts/{id:[0-9]+}", getPostHandler).Methods("GET")
 	router.Handle("/posts/user/{id:[0-9]+}", getUserPostsHandler).Methods("GET")
-	router.Handle("/posts", deletePostHandler).Methods("DELETE")
+	router.Handle("/posts/{id:[0-9]+}", deletePostHandler).Methods("DELETE")
 	router.Handle("/posts", savePostHandler).Methods("POST")
-	router.Handle("/posts", updatePostHandler).Methods("PATCH")
+	router.Handle("/posts/{id:[0-9]+}", updatePostHandler).Methods("PATCH")
 
 	logger.Info("Finished router initialization")
+
+	logger.Info("Starting fetch process")
+	fetchClient.StartFetching(context.Background(), &fetch.FetchRequest{})
 
 	return router
 }
